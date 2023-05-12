@@ -1,20 +1,26 @@
-import * as React from 'react';
-import Map from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v<YOUR_MAPBOX_VERSION>/mapbox-gl.css' rel='stylesheet' />
-
+import './App.css';
+import { useEffect, useRef } from 'react';
 
 function App() {
+  const mapContainerRef = useRef(null);
+
+  useEffect(() => {
+    mapboxgl.accessToken = "pk.eyJ1IjoiamxlbnoyMCIsImEiOiJjbGhreWlnN3EwbHJtM2dwczNpdHlkc3d0In0.sSXMjqx4kuGFuoXzZ0MNKQ";
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/streets-v11'
+    });
+  }, []);
+
   return (
-    <Map
-      initialViewState={{
-        longitude: -122.4,
-        latitude: 37.8,
-        zoom: 14
-      }}
-      style={{width: 600, height: 400}}
-      mapStyle="mapbox://styles/mapbox/streets-v9"
-    />
+    <div>
+      <div ref={mapContainerRef} className="map-container" />
+      <div>Hello</div>
+    </div>
+    
   );
 }
- export default App
+
+export default App;
