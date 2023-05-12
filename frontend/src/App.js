@@ -1,57 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import Grid from '@mui/material/Grid'; 
-import Header from './components/Header/Header'
-import List from './components/List/List'
-import Map from './components/Map/Map'
+import * as React from 'react';
+import Map from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v<YOUR_MAPBOX_VERSION>/mapbox-gl.css' rel='stylesheet' />
 
-const App = () => {
-    const [places, setPlaces] = useState([]);
-    const [childClicked,setChildClicked] = useState(null);
 
-    const [coordinates, setCoordinates] = useState({});
-    const [bounds, setBounds] = useState({});
-
-    const [isLoading, setIsLoading] = useState(false)
-
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(({ coords : {latitude, longitude} }) => {
-            setCoordinates({ lat: latitude, lng: longitude });
-
-        });
-    },[]);
-  
-    useEffect(() =>{
-        setIsLoading(true)
-        .then((data) => {
-                setPlaces(data);
-                setIsLoading(false)
-        });
-    }, [coordinates, bounds]);
-
-    return(
-        <>
-            <CssBaseline />
-            <Header />
-            <Grid container spacing ={3} style ={{width: '100%'}}>
-                <Grid item xs={12} md={4}>
-                    <List
-                     places ={places}
-                     childClicked ={childClicked}
-                     isLoading = {isLoading}
-                     />
-                </Grid>
-                 <Grid item xs={12} md={8}>
-                    <Map 
-                        setCoordinates ={setCoordinates}
-                        setBounds ={setBounds}
-                        coordinates={coordinates}
-                        places ={places}
-                        setChildClicked = {setChildClicked}
-                    />
-                </Grid>
-            </Grid>
-        </>
-    );
+function App() {
+  return (
+    <Map
+      initialViewState={{
+        longitude: -122.4,
+        latitude: 37.8,
+        zoom: 14
+      }}
+      style={{width: 600, height: 400}}
+      mapStyle="mapbox://styles/mapbox/streets-v9"
+    />
+  );
 }
-
-export default App;
+ export default App
