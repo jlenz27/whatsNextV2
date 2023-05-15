@@ -7,6 +7,7 @@ import axios from 'axios';
 
 function App() {
   const [pins, setPins] = useState([])
+  const [newPlace, setNewPlace] = useState([])
 
   const mapContainerRef = useRef(null);
 
@@ -56,6 +57,8 @@ function App() {
     ))
 
   }, [pins]);
+
+
 
   useEffect(() => {
     const getPins = async () => {
