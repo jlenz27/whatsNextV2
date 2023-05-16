@@ -1,5 +1,4 @@
-import CancelIcon from '@mui/icons-material/Cancel';
-import RoomIcon from '@mui/icons-material/Room';
+import { Cancel, Room } from "@material-ui/icons";
 import axios from "axios";
 import { useRef, useState } from "react";
 import "./register.css";
@@ -30,7 +29,7 @@ export default function Register({ setShowRegister }) {
   return (
     <div className="registerContainer">
       <div className="logo">
-        <RoomIcon className="logoIcon" />
+        <Room className="logoIcon" />
         <span>LamaPin</span>
       </div>
       <form onSubmit={handleSubmit}>
@@ -50,7 +49,7 @@ export default function Register({ setShowRegister }) {
         )}
         {error && <span className="failure">Something went wrong!</span>}
       </form>
-      <CancelIcon
+      <Cancel
         className="registerCancel"
         onClick={() => setShowRegister(false)}
       />

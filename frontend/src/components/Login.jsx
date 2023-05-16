@@ -1,5 +1,4 @@
-import CancelIcon from '@mui/icons-material/Cancel';
-import RoomIcon from '@mui/icons-material/Room';
+import { Cancel, Room } from "@material-ui/icons";
 import axios from "axios";
 import { useRef, useState } from "react";
 import "./login.css";
@@ -28,7 +27,7 @@ export default function Login({ setShowLogin, setCurrentUsername,myStorage }) {
   return (
     <div className="loginContainer">
       <div className="logo">
-        <RoomIcon className="logoIcon" />
+        <Room className="logoIcon" />
         <span>LamaPin</span>
       </div>
       <form onSubmit={handleSubmit}>
@@ -44,7 +43,7 @@ export default function Login({ setShowLogin, setCurrentUsername,myStorage }) {
         </button>
         {error && <span className="failure">Something went wrong!</span>}
       </form>
-      <CancelIcon className="loginCancel" onClick={() => setShowLogin(false)} />
+      <Cancel className="loginCancel" onClick={() => setShowLogin(false)} />
     </div>
   );
 }

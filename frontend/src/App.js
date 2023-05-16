@@ -1,7 +1,7 @@
 import "./App.css";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import { useEffect, useState } from "react";
-import RoomIcon from '@mui/icons-material/Room';
+import { Room, Star, StarBorder } from "@material-ui/icons";
 import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./components/Register";
@@ -15,6 +15,7 @@ function App() {
   const [newPlace, setNewPlace] = useState(null);
   const [title, setTitle] = useState(null);
   const [desc, setDesc] = useState(null);
+  const [star, setStar] = useState(0);
   const [viewport, setViewport] = useState({
     latitude: 47.040182,
     longitude: 17.071727,
@@ -42,6 +43,7 @@ function App() {
       username: currentUsername,
       title,
       desc,
+      rating: star,
       lat: newPlace.lat,
       long: newPlace.long,
     };
@@ -76,11 +78,11 @@ function App() {
     <div style={{ height: "100vh", width: "100%" }}>
       <ReactMapGL
         {...viewport}
-        mapboxApiAccessToken=""
+        mapboxApiAccessToken="pk.eyJ1IjoiamxlbnoyMCIsImEiOiJjbGhreWlnN3EwbHJtM2dwczNpdHlkc3d0In0.sSXMjqx4kuGFuoXzZ0MNKQ"
         width="100%"
         height="100%"
         transitionDuration="200"
-        mapStyle="mapbox://styles/mapbox/streets-v12"
+        mapStyle="mapbox://styles/mapbox/navigation-day-v1"
         onViewportChange={(viewport) => setViewport(viewport)}
         onDblClick={currentUsername && handleAddClick}
       >
@@ -92,7 +94,7 @@ function App() {
               offsetLeft={-3.5 * viewport.zoom}
               offsetTop={-7 * viewport.zoom}
             >
-              <RoomIcon
+              <Room
                 style={{
                   fontSize: 7 * viewport.zoom,
                   color:
@@ -115,8 +117,12 @@ function App() {
                 <div className="card">
                   <label>Place</label>
                   <h4 className="place">{p.title}</h4>
-                  <label>Description</label>
+                  <label>Review</label>
                   <p className="desc">{p.desc}</p>
+                  <label>Rating</label>
+                  <div className="stars">
+                    {Array(p.rating).fill(<Star className="star" />)}
+                  </div>
                   <label>Information</label>
                   <span className="username">
                     Created by <b>{p.username}</b>
@@ -135,7 +141,7 @@ function App() {
               offsetLeft={-3.5 * viewport.zoom}
               offsetTop={-7 * viewport.zoom}
             >
-              <RoomIcon
+              <Room
                 style={{
                   fontSize: 7 * viewport.zoom,
                   color: "tomato",
@@ -164,8 +170,14 @@ function App() {
                     placeholder="Say us something about this place."
                     onChange={(e) => setDesc(e.target.value)}
                   />
-                 
-              
+                  <label>Rating</label>
+                  <select onChange={(e) => setStar(e.target.value)}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
                   <button type="submit" className="submitButton">
                     Add Pin
                   </button>
