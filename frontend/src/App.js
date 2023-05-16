@@ -1,82 +1,205 @@
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import './App.css';
-import { useEffect, useRef, useState } from 'react';
-import { Marker } from 'mapbox-gl';
-import axios from 'axios';
+import "./App.css";
+import ReactMapGL, { Marker, Popup } from "react-map-gl";
+import { useEffect, useState } from "react";
+import RoomIcon from '@mui/icons-material/Room';
+import axios from "axios";
+import { format } from "timeago.js";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
-  const [pins, setPins] = useState([])
-  const [newPlace, setNewPlace] = useState([])
+  const myStorage = window.localStorage;
+  const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
+  const [pins, setPins] = useState([]);
+  const [currentPlaceId, setCurrentPlaceId] = useState(null);
+  const [newPlace, setNewPlace] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [desc, setDesc] = useState(null);
+  const [viewport, setViewport] = useState({
+    latitude: 47.040182,
+    longitude: 17.071727,
+    zoom: 4,
+  });
+  const [showRegister, setShowRegister] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
-  const mapContainerRef = useRef(null);
+  const handleMarkerClick = (id, lat, long) => {
+    setCurrentPlaceId(id);
+    setViewport({ ...viewport, latitude: lat, longitude: long });
+  };
 
-  useEffect(() => {
-    mapboxgl.accessToken = "pk.eyJ1IjoiamxlbnoyMCIsImEiOiJjbGhreWlnN3EwbHJtM2dwczNpdHlkc3d0In0.sSXMjqx4kuGFuoXzZ0MNKQ";
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-117.1611, 32.7157],
-      zoom: 12
+  const handleAddClick = (e) => {
+    const [longitude, latitude] = e.lngLat;
+    setNewPlace({
+      lat: latitude,
+      long: longitude,
     });
+  };
 
-    // Add event listener for clicking on places
-    map.on('click', 'places', (e) => {
-      const coordinates = e.features[0].geometry.coordinates.slice();
-      const description = e.features[0].properties.description;
-      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-      }
-      new mapboxgl.Popup()
-        .setLngLat(coordinates)
-        .setHTML(description)
-        .addTo(map);
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newPin = {
+      username: currentUsername,
+      title,
+      desc,
+      lat: newPlace.lat,
+      long: newPlace.long,
+    };
 
-    // Add event listener for mouseenter on places
-    map.on('mouseenter', 'places', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
-    // Add event listener for mouseleave on places
-    map.on('mouseleave', 'places', () => {
-      map.getCanvas().style.cursor = '';
-    });
-
-    const marker = new mapboxgl.Marker({
-      color: "Blue",
-      draggable: false
-    }).setLngLat([-117.1611, 32.7157])
-      .addTo(map);
-
-    pins.map(p => (
-      new mapboxgl.Popup({ closeOnClick: false })
-        .setLngLat([p.long, p.lat])
-        .setHTML(p.title + '<br>' + p.desc + '<br>' + p.username)
-        .addTo(map)
-    ))
-
-  }, [pins]);
-
-
+    try {
+      const res = await axios.post("/pins", newPin);
+      setPins([...pins, res.data]);
+      setNewPlace(null);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     const getPins = async () => {
       try {
-        const res = await axios.get("/pins");
-        setPins(res.data);
-
+        const allPins = await axios.get("/pins");
+        setPins(allPins.data);
       } catch (err) {
         console.log(err);
       }
     };
     getPins();
-  }, [])
+  }, []);
+
+  const handleLogout = () => {
+    setCurrentUsername(null);
+    myStorage.removeItem("user");
+  };
 
   return (
-    <div>
-      <div ref={mapContainerRef} className="map-container" />
-      <div>Hello</div>
+    <div style={{ height: "100vh", width: "100%" }}>
+      <ReactMapGL
+        {...viewport}
+        mapboxApiAccessToken=""
+        width="100%"
+        height="100%"
+        transitionDuration="200"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
+        onViewportChange={(viewport) => setViewport(viewport)}
+        onDblClick={currentUsername && handleAddClick}
+      >
+        {pins.map((p) => (
+          <>
+            <Marker
+              latitude={p.lat}
+              longitude={p.long}
+              offsetLeft={-3.5 * viewport.zoom}
+              offsetTop={-7 * viewport.zoom}
+            >
+              <RoomIcon
+                style={{
+                  fontSize: 7 * viewport.zoom,
+                  color:
+                    currentUsername === p.username ? "tomato" : "slateblue",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleMarkerClick(p._id, p.lat, p.long)}
+              />
+            </Marker>
+            {p._id === currentPlaceId && (
+              <Popup
+                key={p._id}
+                latitude={p.lat}
+                longitude={p.long}
+                closeButton={true}
+                closeOnClick={false}
+                onClose={() => setCurrentPlaceId(null)}
+                anchor="left"
+              >
+                <div className="card">
+                  <label>Place</label>
+                  <h4 className="place">{p.title}</h4>
+                  <label>Description</label>
+                  <p className="desc">{p.desc}</p>
+                  <label>Information</label>
+                  <span className="username">
+                    Created by <b>{p.username}</b>
+                  </span>
+                  <span className="date">{format(p.createdAt)}</span>
+                </div>
+              </Popup>
+            )}
+          </>
+        ))}
+        {newPlace && (
+          <>
+            <Marker
+              latitude={newPlace.lat}
+              longitude={newPlace.long}
+              offsetLeft={-3.5 * viewport.zoom}
+              offsetTop={-7 * viewport.zoom}
+            >
+              <RoomIcon
+                style={{
+                  fontSize: 7 * viewport.zoom,
+                  color: "tomato",
+                  cursor: "pointer",
+                }}
+              />
+            </Marker>
+            <Popup
+              latitude={newPlace.lat}
+              longitude={newPlace.long}
+              closeButton={true}
+              closeOnClick={false}
+              onClose={() => setNewPlace(null)}
+              anchor="left"
+            >
+              <div>
+                <form onSubmit={handleSubmit}>
+                  <label>Title</label>
+                  <input
+                    placeholder="Enter a title"
+                    autoFocus
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                  <label>Description</label>
+                  <textarea
+                    placeholder="Say us something about this place."
+                    onChange={(e) => setDesc(e.target.value)}
+                  />
+                 
+              
+                  <button type="submit" className="submitButton">
+                    Add Pin
+                  </button>
+                </form>
+              </div>
+            </Popup>
+          </>
+        )}
+        {currentUsername ? (
+          <button className="button logout" onClick={handleLogout}>
+            Log out
+          </button>
+        ) : (
+          <div className="buttons">
+            <button className="button login" onClick={() => setShowLogin(true)}>
+              Log in
+            </button>
+            <button
+              className="button register"
+              onClick={() => setShowRegister(true)}
+            >
+              Register
+            </button>
+          </div>
+        )}
+        {showRegister && <Register setShowRegister={setShowRegister} />}
+        {showLogin && (
+          <Login
+            setShowLogin={setShowLogin}
+            setCurrentUsername={setCurrentUsername}
+            myStorage={myStorage}
+          />
+        )}
+      </ReactMapGL>
     </div>
   );
 }
