@@ -17,9 +17,9 @@ function App() {
   const [desc, setDesc] = useState(null);
   const [star, setStar] = useState(0);
   const [viewport, setViewport] = useState({
-    latitude: 47.040182,
-    longitude: 17.071727,
-    zoom: 4,
+    latitude: 32.7157,
+    longitude: -117.1611,
+    zoom: 12,
   });
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -82,7 +82,7 @@ function App() {
         width="100%"
         height="100%"
         transitionDuration="200"
-        mapStyle="mapbox://styles/mapbox/navigation-day-v1"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         onViewportChange={(viewport) => setViewport(viewport)}
         onDblClick={currentUsername && handleAddClick}
       >
