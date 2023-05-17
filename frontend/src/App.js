@@ -6,6 +6,8 @@ import axios from "axios";
 import { format } from "timeago.js";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import Header from './components/Header/Header'
+
 
 function App() {
   const myStorage = window.localStorage;
@@ -66,7 +68,7 @@ function App() {
         console.log(err);
       }
     };
-    
+
     getPins();
   }, []);
 
@@ -76,6 +78,8 @@ function App() {
   };
 
   return (
+ <>
+  <Header />
     <div style={{ height: "100vh", width: "100%" }}>
       <ReactMapGL
         {...viewport}
@@ -214,6 +218,7 @@ function App() {
         )}
       </ReactMapGL>
     </div>
+    </>
   );
 }
 
