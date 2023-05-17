@@ -9,12 +9,12 @@ const Header = () => {
         <AppBar position='static'>
             <Toolbar className={classes.toolbar}>
                 <Typography variant ="h5" className={classes.title}>
-                    Travel Advisor
+                    What's Next
                 </Typography>
-                <Box display={"flex"}>
-                <Typography variant ="h6" className={classes.title}>
-                    Explore New Places
+                <Typography variant ="h8" className={classes.title}>
+                    A place to save and find 
                 </Typography>
+               
                 {/* <Autocomplete> */}
                     <div className={'classes.search'}>
                         <div className={'classes.searchIcon'}>
@@ -23,7 +23,6 @@ const Header = () => {
                         <InputBase placeholder ="Search..." classes ={{ root: classes.inputRoot, input:classes.inputInput}} />
                     </div>
                 {/* </Autocomplete> */}
-                </Box>
             </Toolbar>
             </AppBar>
     );

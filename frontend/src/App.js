@@ -83,7 +83,7 @@ function App() {
     <div style={{ height: "100vh", width: "100%" }}>
       <ReactMapGL
         {...viewport}
-        mapboxApiAccessToken="pk.eyJ1IjoiamxlbnoyMCIsImEiOiJjbGhreWlnN3EwbHJtM2dwczNpdHlkc3d0In0.sSXMjqx4kuGFuoXzZ0MNKQ"
+        mapboxApiAccessToken = "REACT_APP_MAPBOX"
         width="100%"
         height="100%"
         transitionDuration="200"
