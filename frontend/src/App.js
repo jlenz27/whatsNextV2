@@ -29,13 +29,16 @@ function App() {
     setViewport({ ...viewport, latitude: lat, longitude: long });
   };
 
-  const handleAddClick = (e) => {
-    const [longitude, latitude] = e.lngLat;
+  const handleAddClick = (e)=>{
+
+    const longitude  = e.lngLat.lng;
+    const latitude  = e.lngLat.lat;
+    
     setNewPlace({
       lat: latitude,
-      long: longitude,
-    });
-  };
+      long:longitude
+    })
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
