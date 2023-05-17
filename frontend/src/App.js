@@ -10,6 +10,7 @@ import Header from './components/Header/Header'
 
 
 function App() {
+  const apiKey = process.env.REACT_APP_MAPBOX;
   const myStorage = window.localStorage;
   const [currentUsername, setCurrentUsername] = useState(myStorage.getItem("user"));
   const [pins, setPins] = useState([]);
@@ -83,7 +84,7 @@ function App() {
     <div style={{ height: "100vh", width: "100%" }}>
       <ReactMapGL
         {...viewport}
-        mapboxApiAccessToken = "REACT_APP_MAPBOX"
+        mapboxApiAccessToken = {apiKey}
         width="100%"
         height="100%"
         transitionDuration="200"
