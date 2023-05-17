@@ -29,16 +29,13 @@ function App() {
     setViewport({ ...viewport, latitude: lat, longitude: long });
   };
 
-  const handleAddClick = (e)=>{
-
-    const longitude  = e.lngLat.lng;
-    const latitude  = e.lngLat.lat;
-    
+  const handleAddClick = (e) => {
+    const [longitude, latitude] = e.lngLat;
     setNewPlace({
       lat: latitude,
-      long:longitude
-    })
-  }
+      long: longitude,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,6 +66,7 @@ function App() {
         console.log(err);
       }
     };
+    
     getPins();
   }, []);
 
